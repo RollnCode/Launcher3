@@ -40,6 +40,7 @@ import com.android.launcher3.accessibility.DragViewStateAnnouncer;
 import com.android.launcher3.util.ItemInfoMatcher;
 import com.android.launcher3.util.Thunk;
 import com.android.launcher3.util.TouchController;
+import com.android.launcher3.util.Utils;
 
 import java.util.ArrayList;
 
@@ -134,6 +135,7 @@ public class DragController implements DragDriver.EventListener, TouchController
     public DragView startDrag(Bitmap b, int dragLayerX, int dragLayerY,
             DragSource source, ItemInfo dragInfo, Point dragOffset, Rect dragRegion,
             float initialDragViewScale, DragOptions options) {
+        Utils.toLog("### startDrag");
         if (PROFILE_DRAWING_DURING_DRAG) {
             android.os.Debug.startMethodTracing("Launcher");
         }

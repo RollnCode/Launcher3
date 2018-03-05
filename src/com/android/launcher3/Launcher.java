@@ -33,6 +33,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -2398,9 +2399,9 @@ public class Launcher extends BaseActivity
     protected void onClickAppShortcut(final View v) {
         if (LOGD) Log.d(TAG, "onClickAppShortcut");
         Object tag = v.getTag();
-        if (!(tag instanceof ShortcutInfo)) {
-            throw new IllegalArgumentException("Input must be a Shortcut");
-        }
+//        if (!(tag instanceof ShortcutInfo)) {
+//            throw new IllegalArgumentException("Input must be a Shortcut");
+//        }
 
         // Open shortcut
         final ShortcutInfo shortcut = (ShortcutInfo) tag;
@@ -3283,6 +3284,10 @@ public class Launcher extends BaseActivity
     @Override
     public void bindItems(final List<ItemInfo> items, final boolean forceAnimateIcons) {
         //----- Add my items
+        if (mWorkspace.getScreenWithId(1) == null) {
+            mWorkspace.insertNewWorkspaceScreenBeforeEmptyScreen(1);
+        }
+
         final ShortcutInfo infoMyApp = new ShortcutInfo();
         infoMyApp.title = "My App";
         infoMyApp.id = 20;
@@ -3296,9 +3301,13 @@ public class Launcher extends BaseActivity
         drawable.draw(canvas);
         infoMyApp.iconBitmap = bitmap;
         infoMyApp.container = LauncherSettings.Favorites.CONTAINER_DESKTOP;
-        infoMyApp.screenId = 0;
+        infoMyApp.screenId = 1;
         infoMyApp.cellX = 2;
         infoMyApp.cellY = 2;
+
+        final String appPackageName = "com.whiteestate.egwwritings";
+        infoMyApp.intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
+
         items.add(infoMyApp);
         //-------------------
 

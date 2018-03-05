@@ -84,10 +84,13 @@ import com.android.launcher3.util.ItemInfoMatcher;
 import com.android.launcher3.util.LongArrayMap;
 import com.android.launcher3.util.PackageUserKey;
 import com.android.launcher3.util.Thunk;
+import com.android.launcher3.util.Utils;
 import com.android.launcher3.util.VerticalFlingDetector;
 import com.android.launcher3.util.WallpaperOffsetInterpolator;
 import com.android.launcher3.widget.PendingAddShortcutInfo;
 import com.android.launcher3.widget.PendingAddWidgetInfo;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -334,6 +337,8 @@ public class Workspace extends PagedView
      */
     public Workspace(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        Utils.toLog("### Workspace");
 
         mLauncher = Launcher.getLauncher(context);
         mStateTransitionAnimation = new WorkspaceStateTransitionAnimation(mLauncher, this);
@@ -932,6 +937,7 @@ public class Workspace extends PagedView
         return newId;
     }
 
+    @Nullable
     public CellLayout getScreenWithId(long screenId) {
         return mWorkspaceScreens.get(screenId);
     }
