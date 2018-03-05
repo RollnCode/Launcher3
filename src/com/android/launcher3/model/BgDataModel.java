@@ -108,7 +108,7 @@ public class BgDataModel {
     /**
      * Clears all the data
      */
-    public synchronized void clear() {
+    public synchronized void clear() { // clear when start app
         workspaceItems.clear();
         appWidgets.clear();
         folders.clear();
@@ -315,7 +315,7 @@ public class BgDataModel {
             case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
                 if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP ||
                         item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
-                    workspaceItems.add(item);
+                    workspaceItems.add(item); // add items there
                 } else {
                     if (newItem) {
                         if (!folders.containsKey(item.container)) {

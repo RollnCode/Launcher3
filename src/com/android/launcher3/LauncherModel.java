@@ -17,7 +17,6 @@
 package com.android.launcher3;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -40,9 +39,9 @@ import com.android.launcher3.compat.UserManagerCompat;
 import com.android.launcher3.dynamicui.ExtractionUtils;
 import com.android.launcher3.graphics.LauncherIcons;
 import com.android.launcher3.model.AddWorkspaceItemsTask;
+import com.android.launcher3.model.BaseModelUpdateTask;
 import com.android.launcher3.model.BgDataModel;
 import com.android.launcher3.model.CacheDataUpdatedTask;
-import com.android.launcher3.model.BaseModelUpdateTask;
 import com.android.launcher3.model.LoaderResults;
 import com.android.launcher3.model.LoaderTask;
 import com.android.launcher3.model.ModelWriter;
@@ -258,7 +257,7 @@ public class LauncherModel extends BroadcastReceiver
      * a list of screen ids in the order that they should appear.
      */
     public static void updateWorkspaceScreenOrder(Context context, final ArrayList<Long> screens) {
-        final ArrayList<Long> screensCopy = new ArrayList<Long>(screens);
+        final ArrayList<Long> screensCopy = new ArrayList<>(screens);
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
 
@@ -274,7 +273,7 @@ public class LauncherModel extends BroadcastReceiver
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+                ArrayList<ContentProviderOperation> ops = new ArrayList<>();
                 // Clear the table
                 ops.add(ContentProviderOperation.newDelete(uri).build());
                 int count = screensCopy.size();
