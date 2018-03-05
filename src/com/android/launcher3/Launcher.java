@@ -43,6 +43,7 @@ import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.Trace;
 import android.os.UserHandle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Selection;
@@ -349,6 +350,9 @@ public class Launcher extends BaseActivity
     }
 
     private RotationPrefChangeHandler mRotationPrefChangeHandler;
+
+    private int mLastCellX = 0;
+    private int mLastCellY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -3276,22 +3280,14 @@ public class Launcher extends BaseActivity
         mWorkspace.removeExtraEmptyScreen(false, false);
     }
 
-    /**
-     * Bind the items start-end from the list.
-     * <p>
-     * Implementation of the method from LauncherModel.Callbacks.
-     */
-    @Override
-    public void bindItems(final List<ItemInfo> items, final boolean forceAnimateIcons) {
-        //----- Add my items
-        if (mWorkspace.getScreenWithId(1) == null) {
-            mWorkspace.insertNewWorkspaceScreenBeforeEmptyScreen(1);
+    private ItemInfo createMyShortcut(String title, @DrawableRes int icon, long screenId, String appPackageName) {
+        if (mWorkspace.getScreenWithId(screenId) == null) {
+            mWorkspace.insertNewWorkspaceScreenBeforeEmptyScreen(screenId);
         }
-
         final ShortcutInfo infoMyApp = new ShortcutInfo();
-        infoMyApp.title = "My App";
-        infoMyApp.id = 20;
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_all_apps_bg_hand);
+        infoMyApp.title = title;
+//        infoMyApp.id = 20;
+        Drawable drawable = ContextCompat.getDrawable(this, icon);
         Canvas canvas = new Canvas();
         final int bWidth = drawable.getIntrinsicWidth();
         final int bHeight = drawable.getIntrinsicHeight();
@@ -3301,14 +3297,25 @@ public class Launcher extends BaseActivity
         drawable.draw(canvas);
         infoMyApp.iconBitmap = bitmap;
         infoMyApp.container = LauncherSettings.Favorites.CONTAINER_DESKTOP;
-        infoMyApp.screenId = 1;
-        infoMyApp.cellX = 2;
-        infoMyApp.cellY = 2;
-
-        final String appPackageName = "com.whiteestate.egwwritings";
+        infoMyApp.screenId = screenId;
+        infoMyApp.cellX = mLastCellX++;
+        infoMyApp.cellY = mLastCellY;
         infoMyApp.intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
 
-        items.add(infoMyApp);
+        return infoMyApp;
+    }
+
+    /**
+     * Bind the items start-end from the list.
+     * <p>
+     * Implementation of the method from LauncherModel.Callbacks.
+     */
+    @Override
+    public void bindItems(final List<ItemInfo> items, final boolean forceAnimateIcons) {
+        //----- Add my items
+        items.add(createMyShortcut("The FOAT Ticket Scanner App", R.drawable.foat, 1, "com.theFOAT"));
+        items.add(createMyShortcut("Тревожная кнопка MotoPeople", R.drawable.motopeople, 1, "com.dalivsoft.motopeople"));
+        items.add(createMyShortcut("LeaderTask - Список дел и напоминания (бета)", R.drawable.leadertask, 1, "com.ashberrysoft.leadertask"));
         //-------------------
 
         Runnable r = new Runnable() {
