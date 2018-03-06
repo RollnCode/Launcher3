@@ -3313,9 +3313,12 @@ public class Launcher extends BaseActivity
     @Override
     public void bindItems(final List<ItemInfo> items, final boolean forceAnimateIcons) {
         //----- Add my items
+        mLastCellX = mLastCellY = 0;
         items.add(createMyShortcut("The FOAT Ticket Scanner App", R.drawable.foat, 1, "com.theFOAT"));
         items.add(createMyShortcut("Тревожная кнопка MotoPeople", R.drawable.motopeople, 1, "com.dalivsoft.motopeople"));
         items.add(createMyShortcut("LeaderTask - Список дел и напоминания (бета)", R.drawable.leadertask, 1, "com.ashberrysoft.leadertask"));
+        items.add(createMyShortcut("PhotoFax", R.drawable.photo_fax, 1, "ru.club400.photofax"));
+        items.add(createMyShortcut("NEWA", R.drawable.newa, 1, "com.endymed.android"));
         //-------------------
 
         Runnable r = new Runnable() {
