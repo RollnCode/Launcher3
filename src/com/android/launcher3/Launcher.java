@@ -3336,6 +3336,16 @@ public class Launcher extends BaseActivity
         items.add(createMyShortcut("Говорит Москва", R.drawable.govoritmoskva, 1, "ru.govoritmoskva"));
         items.add(createMyShortcut("Ekoplaza", R.drawable.ekoplaza, 1, "nl.ekoplaza"));
         items.add(createMyShortcut("FINAO", R.drawable.finao, 1, "com.finaonation"));
+
+        mLastCellX = mLastCellY = 0;
+        items.add(createMyShortcut("Спроси Себя", R.drawable.answeryourself, 2, "com.rollncode.answeryourself.app"));
+        items.add(createMyShortcut("Bubbles", R.drawable.bubbles, 2, "com.rollncode.bubbles.game"));
+        items.add(createMyShortcut("Color Lines", R.drawable.colorlines, 2, "com.rollncode.colorlines.game"));
+        items.add(createMyShortcut("ITArena", R.drawable.itarena, 2, "com.dalivsoft.itarena"));
+        items.add(createMyShortcut("Spider Runs Free", R.drawable.spider_free, 2, "com.dalivsoft.spider_free"));
+        items.add(createMyShortcut("Spider Catch", R.drawable.spider_catch, 2, "com.dalivsoft.spider_catch"));
+        items.add(createMyShortcut("Spider Runs", R.drawable.spider_free, 2, "com.dalivsoft.spider"));
+        items.add(createMyShortcut("Clicker", R.drawable.clicker, 2, "com.rollncode.clicker"));
         //-------------------
 
         final Runnable r = new Runnable() {
