@@ -3287,11 +3287,11 @@ public class Launcher extends BaseActivity
         final ShortcutInfo infoMyApp = new ShortcutInfo();
         infoMyApp.title = title;
 //        infoMyApp.id = 20;
-        Drawable drawable = ContextCompat.getDrawable(this, icon);
-        Canvas canvas = new Canvas();
+        final Drawable drawable = ContextCompat.getDrawable(this, icon);
+        final Canvas canvas = new Canvas();
         final int bWidth = drawable.getIntrinsicWidth();
         final int bHeight = drawable.getIntrinsicHeight();
-        Bitmap bitmap = Bitmap.createBitmap(bWidth, bHeight, Bitmap.Config.ARGB_8888);
+        final Bitmap bitmap = Bitmap.createBitmap(bWidth, bHeight, Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bitmap);
         drawable.setBounds(0, 0, bWidth, bHeight);
         drawable.draw(canvas);
@@ -3300,6 +3300,10 @@ public class Launcher extends BaseActivity
         infoMyApp.screenId = screenId;
         infoMyApp.cellX = mLastCellX++;
         infoMyApp.cellY = mLastCellY;
+        if (mLastCellX == LauncherAppState.getIDP(this).numRows) {
+            mLastCellY++;
+            mLastCellX = 0;
+        }
         infoMyApp.intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
 
         return infoMyApp;
@@ -3319,9 +3323,22 @@ public class Launcher extends BaseActivity
         items.add(createMyShortcut("LeaderTask - Список дел и напоминания (бета)", R.drawable.leadertask, 1, "com.ashberrysoft.leadertask"));
         items.add(createMyShortcut("PhotoFax", R.drawable.photo_fax, 1, "ru.club400.photofax"));
         items.add(createMyShortcut("NEWA", R.drawable.newa, 1, "com.endymed.android"));
+        items.add(createMyShortcut("Geo-Oil", R.drawable.geo_oil, 1, "ru.ipartner.geooil"));
+        items.add(createMyShortcut("To-U - доступні зарядки для EV", R.drawable.tou, 1, "com.go.tou"));
+        items.add(createMyShortcut("EGW Writings 2", R.drawable.egw_writings_2, 1, "com.whiteestate.egwwritings"));
+        items.add(createMyShortcut("Foodridge", R.drawable.foodridge, 1, "com.foodridge.android"));
+        items.add(createMyShortcut("Musketeer -Your Safety Net!", R.drawable.musketeer, 1, "com.musketeer"));
+        items.add(createMyShortcut("SmartDispatch", R.drawable.smart_dispatch, 1, "com.smart_dispatch"));
+        items.add(createMyShortcut("Bookizy", R.drawable.bookizy, 1, "com.getbookizyapp"));
+        items.add(createMyShortcut("SMS Spam Blocker PRO", R.drawable.smsspamblockerpro, 1, "com.smsspamblockerpro"));
+        items.add(createMyShortcut("Scope 'Em", R.drawable.scopeem, 1, "com.scopeem"));
+        items.add(createMyShortcut("Ubed", R.drawable.ubed, 1, "io.ubed"));
+        items.add(createMyShortcut("Говорит Москва", R.drawable.govoritmoskva, 1, "ru.govoritmoskva"));
+        items.add(createMyShortcut("Ekoplaza", R.drawable.ekoplaza, 1, "nl.ekoplaza"));
+        items.add(createMyShortcut("FINAO", R.drawable.finao, 1, "com.finaonation"));
         //-------------------
 
-        Runnable r = new Runnable() {
+        final Runnable r = new Runnable() {
             public void run() {
                 bindItems(items, forceAnimateIcons);
             }
