@@ -3346,6 +3346,21 @@ public class Launcher extends BaseActivity
         items.add(createMyShortcut("Spider Catch", R.drawable.spider_catch, 2, "com.dalivsoft.spider_catch"));
         items.add(createMyShortcut("Spider Runs", R.drawable.spider_free, 2, "com.dalivsoft.spider"));
         items.add(createMyShortcut("Clicker", R.drawable.clicker, 2, "com.rollncode.clicker"));
+
+        mLastCellX = mLastCellY = 0;
+        items.add(createMyShortcut("Bankaroo-virtual bank for kids", R.drawable.bankaroo, 3, "com.rimmer.android.bankaroo"));
+        items.add(createMyShortcut("MDChat Mobile", R.drawable.mdchat, 3, "com.mobile.health.one"));
+        items.add(createMyShortcut("PupPod Inc.", R.drawable.puppod, 3, "com.app.puppod"));
+        items.add(createMyShortcut("EGW Writings", R.drawable.egw, 3, "egw.estate"));
+        items.add(createMyShortcut("OfficerTRAK", R.drawable.officer_trak, 3, "com.offdutyservice"));
+        items.add(createMyShortcut("Smipe", R.drawable.smipe, 3, "nl.smipe.app"));
+        items.add(createMyShortcut("CommuniKate Mobile", R.drawable.katemobile, 3, "com.parusholdings.katemobile"));
+        items.add(createMyShortcut("Sliiider", R.drawable.sliiider, 3, "com.sliiider.unlocker"));
+        items.add(createMyShortcut("Frangelico", R.drawable.frangelico, 3, "com.sliiider.frangelico"));
+        items.add(createMyShortcut("Jumpy Slidecoin - Win Prizes", R.drawable.jumpyslidecoin, 3, "com.sliiider.jumpyslidecoin"));
+        items.add(createMyShortcut("Get Package", R.drawable.getpackage, 3, "com.zlabs.getpackage"));
+        items.add(createMyShortcut("Audit24", R.drawable.audit24, 3, "pl.audit24.audytor"));
+        items.add(createMyShortcut("Vizum - miasto, praca, kultura", R.drawable.vizuminfo, 3, "com.vizumlab.vizuminfo"));
         //-------------------
 
         final Runnable r = new Runnable() {
