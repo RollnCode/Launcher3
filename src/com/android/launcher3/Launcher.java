@@ -2410,6 +2410,23 @@ public class Launcher extends BaseActivity
         // Open shortcut
         final ShortcutInfo shortcut = (ShortcutInfo) tag;
 
+        if (!TextUtils.isEmpty(shortcut.appPackageName)) { // my shortcut
+            // check if app is installed
+            PackageManager pm = getPackageManager();
+            boolean isAppInstalled;
+            try {
+                pm.getPackageInfo(shortcut.appPackageName, PackageManager.GET_ACTIVITIES);
+                isAppInstalled = true;
+            } catch (PackageManager.NameNotFoundException ignored) {
+                isAppInstalled = false;
+            }
+            if (isAppInstalled) {
+                shortcut.intent = getPackageManager().getLaunchIntentForPackage(shortcut.appPackageName);
+            } else {
+                shortcut.intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + shortcut.appPackageName));
+            }
+        }
+
         if (shortcut.isDisabled != 0) {
             if ((shortcut.isDisabled &
                     ~ShortcutInfo.FLAG_DISABLED_SUSPENDED &
@@ -3305,6 +3322,7 @@ public class Launcher extends BaseActivity
             mLastCellX = 0;
         }
         infoMyApp.intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
+        infoMyApp.appPackageName = appPackageName;
 
         return infoMyApp;
     }
