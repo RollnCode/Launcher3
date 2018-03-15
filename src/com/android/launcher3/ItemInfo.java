@@ -41,8 +41,9 @@ public class ItemInfo {
      * {@link LauncherSettings.Favorites#ITEM_TYPE_SHORTCUT},
      * {@link LauncherSettings.Favorites#ITEM_TYPE_DEEP_SHORTCUT}
      * {@link LauncherSettings.Favorites#ITEM_TYPE_FOLDER},
-     * {@link LauncherSettings.Favorites#ITEM_TYPE_APPWIDGET} or
-     * {@link LauncherSettings.Favorites#ITEM_TYPE_CUSTOM_APPWIDGET}.
+     * {@link LauncherSettings.Favorites#ITEM_TYPE_APPWIDGET},
+     * {@link LauncherSettings.Favorites#ITEM_TYPE_CUSTOM_APPWIDGET} or
+     * {@link LauncherSettings.Favorites#ITEM_TYPE_WEB}.
      */
     public int itemType;
 

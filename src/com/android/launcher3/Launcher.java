@@ -1,11 +1,7 @@
 package com.android.launcher3;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
+import android.animation.*;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
@@ -13,36 +9,16 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
-import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.ComponentCallbacks2;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentSender;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.*;
 import android.os.Process;
-import android.os.StrictMode;
-import android.os.SystemClock;
-import android.os.Trace;
-import android.os.UserHandle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -51,23 +27,14 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.TextKeyListener;
 import android.util.Log;
-import android.view.Display;
-import android.view.HapticFeedbackConstants;
-import android.view.KeyEvent;
-import android.view.KeyboardShortcutGroup;
-import android.view.KeyboardShortcutInfo;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.launcher3.DropTarget.DragObject;
@@ -77,16 +44,9 @@ import com.android.launcher3.accessibility.LauncherAccessibilityDelegate;
 import com.android.launcher3.allapps.AllAppsContainerView;
 import com.android.launcher3.allapps.AllAppsTransitionController;
 import com.android.launcher3.anim.AnimationLayerSet;
-import com.android.launcher3.compat.AppWidgetManagerCompat;
-import com.android.launcher3.compat.LauncherAppsCompat;
-import com.android.launcher3.compat.LauncherAppsCompatVO;
-import com.android.launcher3.compat.UserManagerCompat;
+import com.android.launcher3.compat.*;
 import com.android.launcher3.config.FeatureFlags;
-import com.android.launcher3.dragndrop.DragController;
-import com.android.launcher3.dragndrop.DragLayer;
-import com.android.launcher3.dragndrop.DragOptions;
-import com.android.launcher3.dragndrop.DragView;
-import com.android.launcher3.dragndrop.PinItemDragListener;
+import com.android.launcher3.dragndrop.*;
 import com.android.launcher3.dynamicui.ExtractedColors;
 import com.android.launcher3.dynamicui.WallpaperColorInfo;
 import com.android.launcher3.folder.Folder;
@@ -107,38 +67,15 @@ import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.userevent.nano.LauncherLogProto.Action;
 import com.android.launcher3.userevent.nano.LauncherLogProto.ContainerType;
 import com.android.launcher3.userevent.nano.LauncherLogProto.ControlType;
-import com.android.launcher3.util.ActivityResultInfo;
-import com.android.launcher3.util.ComponentKey;
-import com.android.launcher3.util.ComponentKeyMapper;
-import com.android.launcher3.util.ItemInfoMatcher;
-import com.android.launcher3.util.MultiHashMap;
-import com.android.launcher3.util.PackageManagerHelper;
-import com.android.launcher3.util.PackageUserKey;
-import com.android.launcher3.util.PendingRequestArgs;
-import com.android.launcher3.util.RunnableWithId;
-import com.android.launcher3.util.SystemUiController;
-import com.android.launcher3.util.TestingUtils;
-import com.android.launcher3.util.Themes;
-import com.android.launcher3.util.Thunk;
-import com.android.launcher3.util.ViewOnDrawExecutor;
-import com.android.launcher3.widget.PendingAddShortcutInfo;
-import com.android.launcher3.widget.PendingAddWidgetInfo;
-import com.android.launcher3.widget.WidgetAddFlowHandler;
-import com.android.launcher3.widget.WidgetHostViewLoader;
-import com.android.launcher3.widget.WidgetsContainerView;
+import com.android.launcher3.util.*;
+import com.android.launcher3.widget.*;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executor;
 
-import static com.android.launcher3.util.RunnableWithId.RUNNABLE_ID_BIND_APPS;
-import static com.android.launcher3.util.RunnableWithId.RUNNABLE_ID_BIND_WIDGETS;
+import static com.android.launcher3.util.RunnableWithId.*;
 
 /**
  * Default launcher application.
@@ -317,8 +254,7 @@ public class Launcher extends BaseActivity
     // simply unregister this runnable.
     private Runnable mExitSpringLoadedModeRunnable;
 
-    @Thunk
-    final Runnable mBuildLayersRunnable = new Runnable() {
+    @Thunk final Runnable mBuildLayersRunnable = new Runnable() {
         public void run() {
             if (mWorkspace != null) {
                 mWorkspace.buildPageHardwareLayers();
@@ -589,25 +525,6 @@ public class Launcher extends BaseActivity
     protected void populateCustomContentContainer() {
         if (mLauncherCallbacks != null) {
             mLauncherCallbacks.populateCustomContentContainer();
-        }
-    }
-
-    /**
-     * Invoked by subclasses to signal a change to the {@link #addToCustomContentPage} value to
-     * ensure the custom content page is added or removed if necessary.
-     */
-    protected void invalidateHasCustomContentToLeft() {
-        if (mWorkspace == null || mWorkspace.getScreenOrder().isEmpty()) {
-            // Not bound yet, wait for bindScreens to be called.
-            return;
-        }
-
-        if (!mWorkspace.hasCustomContent() && hasCustomContentToLeft()) {
-            // Create the custom content page and call the subclass to populate it.
-            mWorkspace.createCustomContentContainer();
-            populateCustomContentContainer();
-        } else if (mWorkspace.hasCustomContent() && !hasCustomContentToLeft()) {
-            mWorkspace.removeCustomContentPage();
         }
     }
 
@@ -3335,50 +3252,70 @@ public class Launcher extends BaseActivity
     @Override
     public void bindItems(final List<ItemInfo> items, final boolean forceAnimateIcons) {
         //----- Add my items
-        mLastCellX = mLastCellY = 0;
-        items.add(createMyShortcut("The FOAT Ticket Scanner App", R.drawable.foat, 1, "com.theFOAT"));
-        items.add(createMyShortcut("Тревожная кнопка MotoPeople", R.drawable.motopeople, 1, "com.dalivsoft.motopeople"));
-        items.add(createMyShortcut("LeaderTask - Список дел и напоминания (бета)", R.drawable.leadertask, 1, "com.ashberrysoft.leadertask"));
-        items.add(createMyShortcut("PhotoFax", R.drawable.photo_fax, 1, "ru.club400.photofax"));
-        items.add(createMyShortcut("NEWA", R.drawable.newa, 1, "com.endymed.android"));
-        items.add(createMyShortcut("Geo-Oil", R.drawable.geo_oil, 1, "ru.ipartner.geooil"));
-        items.add(createMyShortcut("To-U - доступні зарядки для EV", R.drawable.tou, 1, "com.go.tou"));
-        items.add(createMyShortcut("EGW Writings 2", R.drawable.egw_writings_2, 1, "com.whiteestate.egwwritings"));
-        items.add(createMyShortcut("Foodridge", R.drawable.foodridge, 1, "com.foodridge.android"));
-        items.add(createMyShortcut("Musketeer -Your Safety Net!", R.drawable.musketeer, 1, "com.musketeer"));
-        items.add(createMyShortcut("SmartDispatch", R.drawable.smart_dispatch, 1, "com.smart_dispatch"));
-        items.add(createMyShortcut("Bookizy", R.drawable.bookizy, 1, "com.getbookizyapp"));
-        items.add(createMyShortcut("SMS Spam Blocker PRO", R.drawable.smsspamblockerpro, 1, "com.smsspamblockerpro"));
-        items.add(createMyShortcut("Scope 'Em", R.drawable.scopeem, 1, "com.scopeem"));
-        items.add(createMyShortcut("Ubed", R.drawable.ubed, 1, "io.ubed"));
-        items.add(createMyShortcut("Говорит Москва", R.drawable.govoritmoskva, 1, "ru.govoritmoskva"));
-        items.add(createMyShortcut("Ekoplaza", R.drawable.ekoplaza, 1, "nl.ekoplaza"));
-        items.add(createMyShortcut("FINAO", R.drawable.finao, 1, "com.finaonation"));
+        int lastScreenId = 1;
+        if (mWorkspace.getScreenWithId(lastScreenId) == null) {
+            mWorkspace.insertNewWorkspaceScreenBeforeEmptyScreen(lastScreenId);
+
+            final ItemInfo webItemInfo = new ItemInfo();
+            webItemInfo.title = "pwefolewnfrewolifrewfokli";
+            webItemInfo.id = 2132132;
+            webItemInfo.container = Favorites.ITEM_TYPE_WEB;
+            webItemInfo.cellX = 0;
+            webItemInfo.cellY = 0;
+            webItemInfo.spanX = LauncherAppState.getIDP(this).numRows;
+            webItemInfo.spanY = LauncherAppState.getIDP(this).numColumns;
+            webItemInfo.screenId = lastScreenId;
+            webItemInfo.itemType = Favorites.ITEM_TYPE_WEB;
+            items.add(webItemInfo);
+        }
 
         mLastCellX = mLastCellY = 0;
-        items.add(createMyShortcut("Спроси Себя", R.drawable.answeryourself, 2, "com.rollncode.answeryourself.app"));
-        items.add(createMyShortcut("Bubbles", R.drawable.bubbles, 2, "com.rollncode.bubbles.game"));
-        items.add(createMyShortcut("Color Lines", R.drawable.colorlines, 2, "com.rollncode.colorlines.game"));
-        items.add(createMyShortcut("ITArena", R.drawable.itarena, 2, "com.dalivsoft.itarena"));
-        items.add(createMyShortcut("Spider Runs Free", R.drawable.spider_free, 2, "com.dalivsoft.spider_free"));
-        items.add(createMyShortcut("Spider Catch", R.drawable.spider_catch, 2, "com.dalivsoft.spider_catch"));
-        items.add(createMyShortcut("Spider Runs", R.drawable.spider_free, 2, "com.dalivsoft.spider"));
-        items.add(createMyShortcut("Clicker", R.drawable.clicker, 2, "com.rollncode.clicker"));
+        lastScreenId++;
+        items.add(createMyShortcut("The FOAT Ticket Scanner App", R.drawable.foat, lastScreenId, "com.theFOAT"));
+        items.add(createMyShortcut("Тревожная кнопка MotoPeople", R.drawable.motopeople, lastScreenId, "com.dalivsoft.motopeople"));
+        items.add(createMyShortcut("LeaderTask - Список дел и напоминания (бета)", R.drawable.leadertask, lastScreenId, "com.ashberrysoft.leadertask"));
+        items.add(createMyShortcut("PhotoFax", R.drawable.photo_fax, lastScreenId, "ru.club400.photofax"));
+        items.add(createMyShortcut("NEWA", R.drawable.newa, lastScreenId, "com.endymed.android"));
+        items.add(createMyShortcut("Geo-Oil", R.drawable.geo_oil, lastScreenId, "ru.ipartner.geooil"));
+        items.add(createMyShortcut("To-U - доступні зарядки для EV", R.drawable.tou, lastScreenId, "com.go.tou"));
+        items.add(createMyShortcut("EGW Writings 2", R.drawable.egw_writings_2, lastScreenId, "com.whiteestate.egwwritings"));
+        items.add(createMyShortcut("Foodridge", R.drawable.foodridge, lastScreenId, "com.foodridge.android"));
+        items.add(createMyShortcut("Musketeer -Your Safety Net!", R.drawable.musketeer, lastScreenId, "com.musketeer"));
+        items.add(createMyShortcut("SmartDispatch", R.drawable.smart_dispatch, lastScreenId, "com.smart_dispatch"));
+        items.add(createMyShortcut("Bookizy", R.drawable.bookizy, lastScreenId, "com.getbookizyapp"));
+        items.add(createMyShortcut("SMS Spam Blocker PRO", R.drawable.smsspamblockerpro, lastScreenId, "com.smsspamblockerpro"));
+        items.add(createMyShortcut("Scope 'Em", R.drawable.scopeem, lastScreenId, "com.scopeem"));
+        items.add(createMyShortcut("Ubed", R.drawable.ubed, lastScreenId, "io.ubed"));
+        items.add(createMyShortcut("Говорит Москва", R.drawable.govoritmoskva, lastScreenId, "ru.govoritmoskva"));
+        items.add(createMyShortcut("Ekoplaza", R.drawable.ekoplaza, lastScreenId, "nl.ekoplaza"));
+        items.add(createMyShortcut("FINAO", R.drawable.finao, lastScreenId, "com.finaonation"));
 
         mLastCellX = mLastCellY = 0;
-        items.add(createMyShortcut("Bankaroo-virtual bank for kids", R.drawable.bankaroo, 3, "com.rimmer.android.bankaroo"));
-        items.add(createMyShortcut("MDChat Mobile", R.drawable.mdchat, 3, "com.mobile.health.one"));
-        items.add(createMyShortcut("PupPod Inc.", R.drawable.puppod, 3, "com.app.puppod"));
-        items.add(createMyShortcut("EGW Writings", R.drawable.egw, 3, "egw.estate"));
-        items.add(createMyShortcut("OfficerTRAK", R.drawable.officer_trak, 3, "com.offdutyservice"));
-        items.add(createMyShortcut("Smipe", R.drawable.smipe, 3, "nl.smipe.app"));
-        items.add(createMyShortcut("CommuniKate Mobile", R.drawable.katemobile, 3, "com.parusholdings.katemobile"));
-        items.add(createMyShortcut("Sliiider", R.drawable.sliiider, 3, "com.sliiider.unlocker"));
-        items.add(createMyShortcut("Frangelico", R.drawable.frangelico, 3, "com.sliiider.frangelico"));
-        items.add(createMyShortcut("Jumpy Slidecoin - Win Prizes", R.drawable.jumpyslidecoin, 3, "com.sliiider.jumpyslidecoin"));
-        items.add(createMyShortcut("Get Package", R.drawable.getpackage, 3, "com.zlabs.getpackage"));
-        items.add(createMyShortcut("Audit24", R.drawable.audit24, 3, "pl.audit24.audytor"));
-        items.add(createMyShortcut("Vizum - miasto, praca, kultura", R.drawable.vizuminfo, 3, "com.vizumlab.vizuminfo"));
+        lastScreenId++;
+        items.add(createMyShortcut("Спроси Себя", R.drawable.answeryourself, lastScreenId, "com.rollncode.answeryourself.app"));
+        items.add(createMyShortcut("Bubbles", R.drawable.bubbles, lastScreenId, "com.rollncode.bubbles.game"));
+        items.add(createMyShortcut("Color Lines", R.drawable.colorlines, lastScreenId, "com.rollncode.colorlines.game"));
+        items.add(createMyShortcut("ITArena", R.drawable.itarena, lastScreenId, "com.dalivsoft.itarena"));
+        items.add(createMyShortcut("Spider Runs Free", R.drawable.spider_free, lastScreenId, "com.dalivsoft.spider_free"));
+        items.add(createMyShortcut("Spider Catch", R.drawable.spider_catch, lastScreenId, "com.dalivsoft.spider_catch"));
+        items.add(createMyShortcut("Spider Runs", R.drawable.spider_free, lastScreenId, "com.dalivsoft.spider"));
+        items.add(createMyShortcut("Clicker", R.drawable.clicker, lastScreenId, "com.rollncode.clicker"));
+
+        mLastCellX = mLastCellY = 0;
+        lastScreenId++;
+        items.add(createMyShortcut("Bankaroo-virtual bank for kids", R.drawable.bankaroo, lastScreenId, "com.rimmer.android.bankaroo"));
+        items.add(createMyShortcut("MDChat Mobile", R.drawable.mdchat, lastScreenId, "com.mobile.health.one"));
+        items.add(createMyShortcut("PupPod Inc.", R.drawable.puppod, lastScreenId, "com.app.puppod"));
+        items.add(createMyShortcut("EGW Writings", R.drawable.egw, lastScreenId, "egw.estate"));
+        items.add(createMyShortcut("OfficerTRAK", R.drawable.officer_trak, lastScreenId, "com.offdutyservice"));
+        items.add(createMyShortcut("Smipe", R.drawable.smipe, lastScreenId, "nl.smipe.app"));
+        items.add(createMyShortcut("CommuniKate Mobile", R.drawable.katemobile, lastScreenId, "com.parusholdings.katemobile"));
+        items.add(createMyShortcut("Sliiider", R.drawable.sliiider, lastScreenId, "com.sliiider.unlocker"));
+        items.add(createMyShortcut("Frangelico", R.drawable.frangelico, lastScreenId, "com.sliiider.frangelico"));
+        items.add(createMyShortcut("Jumpy Slidecoin - Win Prizes", R.drawable.jumpyslidecoin, lastScreenId, "com.sliiider.jumpyslidecoin"));
+        items.add(createMyShortcut("Get Package", R.drawable.getpackage, lastScreenId, "com.zlabs.getpackage"));
+        items.add(createMyShortcut("Audit24", R.drawable.audit24, lastScreenId, "pl.audit24.audytor"));
+        items.add(createMyShortcut("Vizum - miasto, praca, kultura", R.drawable.vizuminfo, lastScreenId, "com.vizumlab.vizuminfo"));
         //-------------------
 
         final Runnable r = new Runnable() {
@@ -3396,8 +3333,7 @@ public class Launcher extends BaseActivity
         final boolean animateIcons = forceAnimateIcons && canRunNewAppsAnimation();
         Workspace workspace = mWorkspace;
         long newItemsScreenId = -1;
-        int end = items.size();
-        for (int i = 0; i < end; i++) {
+        for (int i = 0; i < items.size(); i++) {
             final ItemInfo item = items.get(i);
 
             // Short circuit if we are loading dock items for a configuration which has no dock
@@ -3428,6 +3364,27 @@ public class Launcher extends BaseActivity
                     }
                     break;
                 }
+                case Favorites.ITEM_TYPE_WEB:
+                    final WebView webView = new WebView(this);
+                    webView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    webView.setTag(item);
+//                    webView.getSettings().setJavaScriptEnabled(true);
+//                    webView.setWebViewClient(new WebViewClient() {
+//
+//                        @TargetApi(VERSION_CODES.M)
+//                        @Override
+//                        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+//                            onReceivedError(view, error.getErrorCode(), error.getDescription().toString(), request.getUrl().toString());
+//                        }
+//
+//                        @Override
+//                        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+//                            Toast.makeText(Launcher.this, description, Toast.LENGTH_LONG).show();
+//                        }
+//                    });
+                    webView.loadUrl("http://www.rollncode.com");
+                    view = webView;
+                    break;
                 default:
                     throw new RuntimeException("Invalid Item Type");
             }
