@@ -29,6 +29,7 @@ import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.OvershootInterpolator;
@@ -105,12 +106,6 @@ public class Launcher extends BaseActivity
     private static final int REQUEST_PERMISSION_CALL_PHONE = 14;
 
     private static final float BOUNCE_ANIMATION_TENSION = 1.3f;
-
-    /**
-     * IntentStarter uses request codes starting with this. This must be greater than all activity
-     * request codes used internally.
-     */
-    protected static final int REQUEST_LAST = 100;
 
     private static final int SOFT_INPUT_MODE_DEFAULT =
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
@@ -364,10 +359,10 @@ public class Launcher extends BaseActivity
 
         mPopupDataProvider = new PopupDataProvider(this);
 
-        ((AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE))
-                .addAccessibilityStateChangeListener(this);
-
-        lockAllApps();
+        final AccessibilityManager accessibilityManager = ((AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE));
+        if (accessibilityManager != null) {
+            accessibilityManager.addAccessibilityStateChangeListener(this);
+        }
 
         restoreState(savedInstanceState);
 
@@ -511,10 +506,7 @@ public class Launcher extends BaseActivity
      * To be overridden by subclasses to hint to Launcher that we have custom content
      */
     protected boolean hasCustomContentToLeft() {
-        if (mLauncherCallbacks != null) {
-            return mLauncherCallbacks.hasCustomContentToLeft();
-        }
-        return false;
+        return mLauncherCallbacks != null && mLauncherCallbacks.hasCustomContentToLeft();
     }
 
     /**
@@ -550,8 +542,7 @@ public class Launcher extends BaseActivity
      * Returns whether we should delay spring loaded mode -- for shortcuts and widgets that have
      * a configuration step, this allows the proper animations to run after other transitions.
      */
-    private long completeAdd(
-            int requestCode, Intent intent, int appWidgetId, PendingRequestArgs info) {
+    private void completeAdd(int requestCode, Intent intent, int appWidgetId, PendingRequestArgs info) {
         long screenId = info.screenId;
         if (info.container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
             // When the screen id represents an actual screen (as opposed to a rank) we make sure
@@ -570,23 +561,17 @@ public class Launcher extends BaseActivity
                 completeRestoreAppWidget(appWidgetId, LauncherAppWidgetInfo.RESTORE_COMPLETED);
                 break;
             case REQUEST_BIND_PENDING_APPWIDGET: {
-                int widgetId = appWidgetId;
-                LauncherAppWidgetInfo widgetInfo =
-                        completeRestoreAppWidget(widgetId, LauncherAppWidgetInfo.FLAG_UI_NOT_READY);
+                LauncherAppWidgetInfo widgetInfo = completeRestoreAppWidget(appWidgetId, LauncherAppWidgetInfo.FLAG_UI_NOT_READY);
                 if (widgetInfo != null) {
                     // Since the view was just bound, also launch the configure activity if needed
-                    LauncherAppWidgetProviderInfo provider = mAppWidgetManager
-                            .getLauncherAppWidgetInfo(widgetId);
+                    final LauncherAppWidgetProviderInfo provider = mAppWidgetManager.getLauncherAppWidgetInfo(appWidgetId);
                     if (provider != null) {
-                        new WidgetAddFlowHandler(provider)
-                                .startConfigActivity(this, widgetInfo, REQUEST_RECONFIGURE_APPWIDGET);
+                        new WidgetAddFlowHandler(provider).startConfigActivity(this, widgetInfo, REQUEST_RECONFIGURE_APPWIDGET);
                     }
                 }
                 break;
             }
         }
-
-        return screenId;
     }
 
     private void handleActivityResult(
@@ -679,12 +664,16 @@ public class Launcher extends BaseActivity
                 final CellLayout dropLayout =
                         mWorkspace.getScreenWithId(requestArgs.screenId);
 
-                dropLayout.setDropPending(true);
+                if (dropLayout != null) {
+                    dropLayout.setDropPending(true);
+                }
                 final Runnable onComplete = new Runnable() {
                     @Override
                     public void run() {
                         completeTwoStageWidgetDrop(resultCode, appWidgetId, requestArgs);
-                        dropLayout.setDropPending(false);
+                        if (dropLayout != null) {
+                            dropLayout.setDropPending(false);
+                        }
                     }
                 };
                 mWorkspace.removeExtraEmptyScreenDelayed(true, onComplete,
@@ -1071,11 +1060,6 @@ public class Launcher extends BaseActivity
         mWorkspace.addToCustomContentPage(customContent, callbacks, description);
     }
 
-    // The custom content needs to offset its content to account for the QSB
-    public int getTopOffsetForCustomContent() {
-        return mWorkspace.getPaddingTop();
-    }
-
     @Override
     public Object onRetainNonConfigurationInstance() {
         // Flag the loader to stop early before switching
@@ -1124,11 +1108,7 @@ public class Launcher extends BaseActivity
         }
 
         // Eat the long press event so the keyboard doesn't come up.
-        if (keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress()) {
-            return true;
-        }
-
-        return handled;
+        return keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress() || handled;
     }
 
     @Override
@@ -1195,7 +1175,7 @@ public class Launcher extends BaseActivity
      * Finds all the views we need and configure them properly.
      */
     private void setupViews() {
-        mDragLayer = (DragLayer) findViewById(R.id.drag_layer);
+        mDragLayer = findViewById(R.id.drag_layer);
         mFocusHandler = mDragLayer.getFocusIndicatorHelper();
         mWorkspace = mDragLayer.findViewById(R.id.workspace);
         mWorkspace.initParentViews(mDragLayer);
@@ -1208,7 +1188,7 @@ public class Launcher extends BaseActivity
         mDragLayer.setup(this, mDragController, mAllAppsController);
 
         // Setup the hotseat
-        mHotseat = (Hotseat) findViewById(R.id.hotseat);
+        mHotseat = findViewById(R.id.hotseat);
         if (mHotseat != null) {
             mHotseat.setOnLongClickListener(this);
         }
@@ -1230,8 +1210,8 @@ public class Launcher extends BaseActivity
         mDropTargetBar = mDragLayer.findViewById(R.id.drop_target_bar);
 
         // Setup Apps and Widgets
-        mAppsView = (AllAppsContainerView) findViewById(R.id.apps_view);
-        mWidgetsView = (WidgetsContainerView) findViewById(R.id.widgets_view);
+        mAppsView = findViewById(R.id.apps_view);
+        mWidgetsView = findViewById(R.id.widgets_view);
 
         // Setup the drag controller (drop targets have to be added in reverse order in priority)
         mDragController.setMoveTarget(mWorkspace);
@@ -1246,7 +1226,7 @@ public class Launcher extends BaseActivity
     }
 
     private void setupOverviewPanel() {
-        mOverviewPanel = (ViewGroup) findViewById(R.id.overview_panel);
+        mOverviewPanel = findViewById(R.id.overview_panel);
 
         // Bind wallpaper button actions
         View wallpaperButton = findViewById(R.id.wallpaper_button);
@@ -1364,7 +1344,7 @@ public class Launcher extends BaseActivity
         if (container < 0) {
             // Adding a shortcut to the Workspace.
             final View view = createShortcut(info);
-            boolean foundCellSpan = false;
+            boolean foundCellSpan;
             // First we check if we already know the exact location where we want to add this item.
             if (cellX >= 0 && cellY >= 0) {
                 cellXY[0] = cellX;
@@ -1779,8 +1759,10 @@ public class Launcher extends BaseActivity
 
         TextKeyListener.getInstance().release();
 
-        ((AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE))
-                .removeAccessibilityStateChangeListener(this);
+        final AccessibilityManager accessibilityManager = ((AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE));
+        if (accessibilityManager != null) {
+            accessibilityManager.removeAccessibilityStateChangeListener(this);
+        }
 
         WallpaperColorInfo.getInstance(this).setOnThemeChangeListener(null);
 
@@ -1837,7 +1819,7 @@ public class Launcher extends BaseActivity
         if (mLauncherCallbacks == null ||
                 !mLauncherCallbacks.startSearch(initialQuery, selectInitialQuery, appSearchData)) {
             // Starting search from the callbacks failed. Start the default global search.
-            startGlobalSearch(initialQuery, selectInitialQuery, appSearchData, null);
+            startGlobalSearch(initialQuery, selectInitialQuery, appSearchData);
         }
 
         // We need to show the workspace after starting the search
@@ -1848,10 +1830,14 @@ public class Launcher extends BaseActivity
      * Starts the global search activity. This code is a copied from SearchManager
      */
     public void startGlobalSearch(String initialQuery,
-                                  boolean selectInitialQuery, Bundle appSearchData, Rect sourceBounds) {
+                                  boolean selectInitialQuery, Bundle appSearchData) {
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        ComponentName globalSearchActivity = searchManager.getGlobalSearchActivity();
+        @Nullable
+        ComponentName globalSearchActivity = null;
+        if (searchManager != null) {
+            globalSearchActivity = searchManager.getGlobalSearchActivity();
+        }
         if (globalSearchActivity == null) {
             Log.w(TAG, "No global search activity found.");
             return;
@@ -1876,7 +1862,7 @@ public class Launcher extends BaseActivity
         if (selectInitialQuery) {
             intent.putExtra(SearchManager.EXTRA_SELECT_QUERY, selectInitialQuery);
         }
-        intent.setSourceBounds(sourceBounds);
+        intent.setSourceBounds(null);
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException ex) {
@@ -1891,10 +1877,7 @@ public class Launcher extends BaseActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (mLauncherCallbacks != null) {
-            return mLauncherCallbacks.onPrepareOptionsMenu(menu);
-        }
-        return false;
+        return mLauncherCallbacks != null && mLauncherCallbacks.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -1958,12 +1941,6 @@ public class Launcher extends BaseActivity
             completeAddAppWidget(appWidgetId, info, boundWidget, addFlowHandler.getProviderInfo(this));
             mWorkspace.removeExtraEmptyScreenDelayed(true, onComplete, delay, false);
         }
-    }
-
-    protected void moveToCustomContentScreen(boolean animate) {
-        // Close any folders that may be open.
-        AbstractFloatingView.closeAllOpenViews(this, animate);
-        mWorkspace.moveToCustomContentScreen(animate);
     }
 
     public void addPendingItem(PendingAddItemInfo info, long container, long screenId,
@@ -2898,15 +2875,15 @@ public class Launcher extends BaseActivity
      */
     // TODO: calling method should use the return value so that when {@code false} is returned
     // the workspace transition doesn't fall into invalid state.
-    private boolean showAppsOrWidgets(State toState, boolean animated) {
+    private void showAppsOrWidgets(State toState, boolean animated) {
         if (!(mState == State.WORKSPACE ||
                 mState == State.APPS_SPRING_LOADED ||
                 mState == State.WIDGETS_SPRING_LOADED ||
                 (mState == State.APPS && mAllAppsController.isTransitioning()))) {
-            return false;
+            return;
         }
         if (toState != State.APPS && toState != State.WIDGETS) {
-            return false;
+            return;
         }
 
         // This is a safe and supported transition to bypass spring_loaded mode.
@@ -2928,7 +2905,6 @@ public class Launcher extends BaseActivity
         // Send an accessibility event to announce the context change
         getWindow().getDecorView()
                 .sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
-        return true;
     }
 
     /**
@@ -3008,14 +2984,6 @@ public class Launcher extends BaseActivity
                 mAppsView.setPredictedApps(apps);
             }
         }
-    }
-
-    void lockAllApps() {
-        // TODO
-    }
-
-    void unlockAllApps() {
-        // TODO
     }
 
     @Override
@@ -3258,7 +3226,7 @@ public class Launcher extends BaseActivity
 
             final ItemInfo webItemInfo = new ItemInfo();
             webItemInfo.title = "pwefolewnfrewolifrewfokli";
-            webItemInfo.id = 2132132;
+            webItemInfo.id = R.id.browser_item_id;
             webItemInfo.container = Favorites.ITEM_TYPE_WEB;
             webItemInfo.cellX = 0;
             webItemInfo.cellY = 0;
@@ -3368,21 +3336,18 @@ public class Launcher extends BaseActivity
                     final WebView webView = new WebView(this);
                     webView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     webView.setTag(item);
-//                    webView.getSettings().setJavaScriptEnabled(true);
-//                    webView.setWebViewClient(new WebViewClient() {
-//
-//                        @TargetApi(VERSION_CODES.M)
-//                        @Override
-//                        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-//                            onReceivedError(view, error.getErrorCode(), error.getDescription().toString(), request.getUrl().toString());
-//                        }
-//
-//                        @Override
-//                        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-//                            Toast.makeText(Launcher.this, description, Toast.LENGTH_LONG).show();
-//                        }
-//                    });
-                    webView.loadUrl("http://www.rollncode.com");
+                    final String url = "http://www.rollncode.com";
+                    webView.setOnTouchListener(new OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_UP) {
+                                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+                            }
+                            return false;
+                        }
+                    });
+
+                    webView.loadUrl(url);
                     view = webView;
                     break;
                 default:
@@ -3519,7 +3484,7 @@ public class Launcher extends BaseActivity
                             item.hasRestoreFlag(LauncherAppWidgetInfo.FLAG_DIRECT_CONFIG);
                     if (isDirectConfig && item.bindOptions != null) {
                         Bundle newOptions = item.bindOptions.getExtras();
-                        if (options != null) {
+                        if (options != null && newOptions != null) {
                             newOptions.putAll(options);
                         }
                         options = newOptions;
@@ -3705,13 +3670,6 @@ public class Launcher extends BaseActivity
 
     public boolean useVerticalBarLayout() {
         return mDeviceProfile.isVerticalBarLayout();
-    }
-
-    public int getSearchBarHeight() {
-        if (mLauncherCallbacks != null) {
-            return mLauncherCallbacks.getSearchBarHeight();
-        }
-        return LauncherCallbacks.SEARCH_BAR_HEIGHT_NORMAL;
     }
 
     /**
@@ -4079,14 +4037,6 @@ public class Launcher extends BaseActivity
             }
         }
         return super.onKeyShortcut(keyCode, event);
-    }
-
-    public static CustomAppWidget getCustomAppWidget(String name) {
-        return sCustomAppWidgets.get(name);
-    }
-
-    public static HashMap<String, CustomAppWidget> getCustomAppWidgets() {
-        return sCustomAppWidgets;
     }
 
     public static Launcher getLauncher(Context context) {
