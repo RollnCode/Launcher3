@@ -29,13 +29,10 @@ import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.launcher3.DropTarget.DragObject;
@@ -3220,25 +3217,8 @@ public class Launcher extends BaseActivity
     @Override
     public void bindItems(final List<ItemInfo> items, final boolean forceAnimateIcons) {
         //----- Add my items
-        int lastScreenId = 1;
-        if (mWorkspace.getScreenWithId(lastScreenId) == null) {
-            mWorkspace.insertNewWorkspaceScreenBeforeEmptyScreen(lastScreenId);
-
-            final ItemInfo webItemInfo = new ItemInfo();
-            webItemInfo.title = "pwefolewnfrewolifrewfokli";
-            webItemInfo.id = R.id.browser_item_id;
-            webItemInfo.container = Favorites.ITEM_TYPE_WEB;
-            webItemInfo.cellX = 0;
-            webItemInfo.cellY = 0;
-            webItemInfo.spanX = LauncherAppState.getIDP(this).numRows;
-            webItemInfo.spanY = LauncherAppState.getIDP(this).numColumns;
-            webItemInfo.screenId = lastScreenId;
-            webItemInfo.itemType = Favorites.ITEM_TYPE_WEB;
-            items.add(webItemInfo);
-        }
-
         mLastCellX = mLastCellY = 0;
-        lastScreenId++;
+        int lastScreenId = 0;
         items.add(createMyShortcut("The FOAT Ticket Scanner App", R.drawable.foat, lastScreenId, "com.theFOAT"));
         items.add(createMyShortcut("Тревожная кнопка MotoPeople", R.drawable.motopeople, lastScreenId, "com.dalivsoft.motopeople"));
         items.add(createMyShortcut("LeaderTask - Список дел и напоминания (бета)", R.drawable.leadertask, lastScreenId, "com.ashberrysoft.leadertask"));
@@ -3332,24 +3312,6 @@ public class Launcher extends BaseActivity
                     }
                     break;
                 }
-                case Favorites.ITEM_TYPE_WEB:
-                    final WebView webView = new WebView(this);
-                    webView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                    webView.setTag(item);
-                    final String url = "http://www.rollncode.com";
-                    webView.setOnTouchListener(new OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            if (event.getAction() == MotionEvent.ACTION_UP) {
-                                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
-                            }
-                            return false;
-                        }
-                    });
-
-                    webView.loadUrl(url);
-                    view = webView;
-                    break;
                 default:
                     throw new RuntimeException("Invalid Item Type");
             }

@@ -16,7 +16,6 @@ import com.android.launcher3.util.ComponentKeyMapper;
 import com.android.launcher3.util.Themes;
 import com.google.android.apps.nexuslauncher.search.ItemInfoUpdateReceiver;
 import com.google.android.apps.nexuslauncher.smartspace.SmartspaceController;
-import com.google.android.apps.nexuslauncher.smartspace.SmartspaceView;
 import com.google.android.libraries.launcherclient.GoogleNow;
 
 import java.io.FileDescriptor;
@@ -49,7 +48,7 @@ public class NexusLauncher {
     }
 
     class NexusLauncherCallbacks implements LauncherCallbacks, SharedPreferences.OnSharedPreferenceChangeListener, WallpaperColorInfo.OnChangeListener {
-        private SmartspaceView mSmartspace;
+//        private SmartspaceView mSmartspace;
 
         private ItemInfoUpdateReceiver getUpdateReceiver() {
             if (mItemInfoUpdateReceiver == null) {
@@ -98,7 +97,7 @@ public class NexusLauncher {
         }
 
         public void onCreate(final Bundle bundle) {
-            SharedPreferences prefs = Utilities.getPrefs(fB);
+            final SharedPreferences prefs = Utilities.getPrefs(fB);
             fz = new com.google.android.apps.nexuslauncher.NexusLauncherOverlay(fB);
             fy = new com.google.android.libraries.launcherclient.GoogleNow(fB, fz, dZ(prefs));
             fz.setNowConnection(fy);
@@ -106,7 +105,7 @@ public class NexusLauncher {
             prefs.registerOnSharedPreferenceChangeListener(this);
 
             SmartspaceController.get(fB).cW();
-            mSmartspace = fB.findViewById(R.id.search_container_workspace);
+//            mSmartspace = fB.findViewById(R.id.search_container_workspace);
 
             mUiInformation.putInt("system_ui_visibility", fB.getWindow().getDecorView().getSystemUiVisibility());
             WallpaperColorInfo instance = WallpaperColorInfo.getInstance(fB);
@@ -147,9 +146,9 @@ public class NexusLauncher {
             mRunning = false;
             fy.onPause();
 
-            if (mSmartspace != null) {
-                mSmartspace.onPause();
-            }
+//            if (mSmartspace != null) {
+//                mSmartspace.onPause();
+//            }
         }
 
         public void onPostCreate(final Bundle bundle) {
@@ -174,9 +173,9 @@ public class NexusLauncher {
                 e.printStackTrace();
             }
 
-            if (mSmartspace != null) {
-                mSmartspace.onResume();
-            }
+//            if (mSmartspace != null) {
+//                mSmartspace.onResume();
+//            }
         }
 
         public void onSaveInstanceState(final Bundle bundle) {

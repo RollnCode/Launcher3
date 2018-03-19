@@ -225,8 +225,6 @@ public class LauncherSettings {
          */
         public static final int ITEM_TYPE_DEEP_SHORTCUT = 6;
 
-        public static final int ITEM_TYPE_WEB = 7;
-
         /**
          * The appWidgetId of the widget
          *

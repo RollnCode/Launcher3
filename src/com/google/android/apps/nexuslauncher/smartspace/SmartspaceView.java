@@ -1,11 +1,7 @@
 package com.google.android.apps.nexuslauncher.smartspace;
 
 import android.animation.ValueAnimator;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.ContentUris;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -23,8 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.launcher3.BubbleTextView;
-import com.android.launcher3.ItemInfo;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
@@ -37,9 +31,10 @@ import com.google.android.apps.nexuslauncher.DynamicIconProvider;
 import com.google.android.apps.nexuslauncher.graphics.IcuDateTextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-public class SmartspaceView extends FrameLayout implements ISmartspace, ValueAnimator.AnimatorUpdateListener, View.OnClickListener, View.OnLongClickListener, Runnable {
+public class SmartspaceView extends FrameLayout
+        implements ISmartspace, ValueAnimator.AnimatorUpdateListener, View.OnClickListener, View.OnLongClickListener, Runnable {
+
     private TextView mSubtitleWeatherText;
     private final TextPaint dB;
     private View mTitleSeparator;
@@ -53,7 +48,7 @@ public class SmartspaceView extends FrameLayout implements ISmartspace, ValueAni
     private ViewGroup mSmartspaceContent;
     private final SmartspaceController dp;
     private SmartspaceDataContainer dq;
-    private BubbleTextView dr;
+//    private BubbleTextView dr;
     private boolean ds;
     private boolean mDoubleLine;
     private final OnClickListener mCalendarClickListener;
@@ -193,6 +188,7 @@ public class SmartspaceView extends FrameLayout implements ISmartspace, ValueAni
         mSubtitleWeatherText = findViewById(R.id.subtitle_weather_text);
         backportClockVisibility(false);
         mClockView = findViewById(R.id.clock);
+        mClockView.setVisibility(View.GONE);
         backportClockVisibility(true);
         mTitleSeparator = findViewById(R.id.title_sep);
 
@@ -276,14 +272,14 @@ public class SmartspaceView extends FrameLayout implements ISmartspace, ValueAni
     protected void onFinishInflate() {
         super.onFinishInflate();
         loadViews();
-        dr = findViewById(R.id.dummyBubbleTextView);
-        dr.setTag(new ItemInfo() {
-            @Override
-            public ComponentName getTargetComponent() {
-                return new ComponentName(getContext(), "");
-            }
-        });
-        dr.setContentDescription("");
+//        dr = findViewById(R.id.dummyBubbleTextView);
+//        dr.setTag(new ItemInfo() {
+//            @Override
+//            public ComponentName getTargetComponent() {
+//                return new ComponentName(getContext(), "");
+//            }
+//        });
+//        dr.setContentDescription("");
     }
 
     protected void onLayout(final boolean b, final int n, final int n2, final int n3, final int n4) {
@@ -304,7 +300,7 @@ public class SmartspaceView extends FrameLayout implements ISmartspace, ValueAni
         launcher.getDragLayer().addView(popupContainerWithArrow);
         ArrayList<SystemShortcut> list = new ArrayList<>(1);
         list.add(new SmartspacePreferencesShortcut());
-        popupContainerWithArrow.populateAndShow(dr, Collections.EMPTY_LIST, Collections.EMPTY_LIST, list);
+//        popupContainerWithArrow.populateAndShow(dr, Collections.EMPTY_LIST, Collections.EMPTY_LIST, list);
         return b;
     }
 
