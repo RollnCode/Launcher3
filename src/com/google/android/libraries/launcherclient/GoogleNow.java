@@ -1,23 +1,16 @@
 package com.google.android.libraries.launcherclient;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Point;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.Process;
-import android.os.RemoteException;
+import android.os.*;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.android.launcher3.MainActivity;
 
 public class GoogleNow {
     private static int API_VERSION = -1;
@@ -75,15 +68,15 @@ public class GoogleNow {
 
     static Intent RC_getOverlayIntent(final Context context) {
         final String packageName = context.getPackageName();
-        return new Intent("com.android.launcher3.WINDOW_OVERLAY")
+        // Uncomment to return "News" page
+        /*return new Intent("com.android.launcher3.WINDOW_OVERLAY")
                 .setPackage("com.google.android.googlequicksearchbox"
-                ).setData(Uri.parse(new StringBuilder(
-                        String.valueOf(packageName).length() + 18)
-                        .append("app://")
-                        .append(packageName)
-                        .append(":")
-                        .append(Process.myUid()).toString())
-                        .buildUpon().appendQueryParameter("v", Integer.toString(7)).build());
+                ).setData(Uri.parse("app://" +
+                        packageName +
+                        ":" +
+                        Process.myUid())
+                        .buildUpon().appendQueryParameter("v", Integer.toString(7)).build());*/
+        return new Intent(context, MainActivity.class);
     }
 
     private void reloadScrollCallback(int flags) {

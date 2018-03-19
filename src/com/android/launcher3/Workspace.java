@@ -324,7 +324,7 @@ public class Workspace extends PagedView
         mWallpaperManager = WallpaperManager.getInstance(context);
 
         final String keyIsWallpaperSet = "keyIsWallpaperSet";
-        final SharedPreferences sp = Utils.getSharedPreferences(context);
+        final SharedPreferences sp = Utilities.getPrefs(context);
         if (!(sp != null && sp.getBoolean(keyIsWallpaperSet, false))) { // if(!isWallpaperSet) {}
             try {
                 mWallpaperManager.setResource(R.raw.bg); // set rnc wallpaper

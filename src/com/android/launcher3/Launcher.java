@@ -3218,7 +3218,7 @@ public class Launcher extends BaseActivity
     public void bindItems(final List<ItemInfo> items, final boolean forceAnimateIcons) {
         //----- Add my items
         mLastCellX = mLastCellY = 0;
-        int lastScreenId = 0;
+        int lastScreenId = 1;
         items.add(createMyShortcut("The FOAT Ticket Scanner App", R.drawable.foat, lastScreenId, "com.theFOAT"));
         items.add(createMyShortcut("Тревожная кнопка MotoPeople", R.drawable.motopeople, lastScreenId, "com.dalivsoft.motopeople"));
         items.add(createMyShortcut("LeaderTask - Список дел и напоминания (бета)", R.drawable.leadertask, lastScreenId, "com.ashberrysoft.leadertask"));

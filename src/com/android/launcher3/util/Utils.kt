@@ -1,7 +1,5 @@
 package com.android.launcher3.util
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 
 /**
@@ -23,8 +21,5 @@ class Utils {
                 }
             }
         }
-
-        @JvmStatic
-        fun getSharedPreferences(context: Context): SharedPreferences? = context.getSharedPreferences("mysettings", Context.MODE_PRIVATE)
     }
 }
