@@ -1,5 +1,7 @@
 package com.android.launcher3.util
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 
 /**
@@ -9,6 +11,7 @@ import android.util.Log
 class Utils {
 
     companion object {
+
         @JvmStatic
         fun toLog(s: String?) {
             if (Constants.DEBUG) {
@@ -20,5 +23,8 @@ class Utils {
                 }
             }
         }
+
+        @JvmStatic
+        fun getSharedPreferences(context: Context): SharedPreferences? = context.getSharedPreferences("mysettings", Context.MODE_PRIVATE)
     }
 }

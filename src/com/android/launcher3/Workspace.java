@@ -24,6 +24,7 @@ import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
@@ -321,10 +322,18 @@ public class Workspace extends PagedView
         DeviceProfile grid = mLauncher.getDeviceProfile();
         mWorkspaceFadeInAdjacentScreens = grid.shouldFadeAdjacentWorkspaceScreens();
         mWallpaperManager = WallpaperManager.getInstance(context);
-        try {
-            mWallpaperManager.setResource(R.raw.bg); // set rnc wallpaper
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        final String keyIsWallpaperSet = "keyIsWallpaperSet";
+        final SharedPreferences sp = Utils.getSharedPreferences(context);
+        if (!(sp != null && sp.getBoolean(keyIsWallpaperSet, false))) { // if(!isWallpaperSet) {}
+            try {
+                mWallpaperManager.setResource(R.raw.bg); // set rnc wallpaper
+                if (sp != null) {
+                    sp.edit().putBoolean(keyIsWallpaperSet, true).apply();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         mWallpaperOffset = new WallpaperOffsetInterpolator(this);
