@@ -3236,6 +3236,7 @@ public class Launcher extends BaseActivity
         items.add(createMyShortcut("Ubed", R.drawable.ubed, lastScreenId, "io.ubed"));
         items.add(createMyShortcut("Говорит Москва", R.drawable.govoritmoskva, lastScreenId, "ru.govoritmoskva"));
         items.add(createMyShortcut("Ekoplaza", R.drawable.ekoplaza, lastScreenId, "nl.ekoplaza"));
+        items.add(createMyShortcut("UDEA", R.drawable.udea, lastScreenId, "nl.udea"));
         items.add(createMyShortcut("FINAO", R.drawable.finao, lastScreenId, "com.finaonation"));
 
         mLastCellX = mLastCellY = 0;
