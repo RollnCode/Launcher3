@@ -35,7 +35,10 @@ import android.view.*;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -565,6 +568,7 @@ public class Workspace extends PagedView
         if (!FeatureFlags.QSB_ON_FIRST_SCREEN) {
             return;
         }
+
         // Add the first page
         CellLayout firstPage = insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, 0);
         if (FeatureFlags.PULLDOWN_SEARCH) {
@@ -602,21 +606,28 @@ public class Workspace extends PagedView
             final WebView webView = new WebView(getContext());
             webView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             final String url = "http://www.rollncode.com";
-            webView.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
-                    }
-                    return false;
-                }
-            });
-
             webView.loadUrl(url);
 
 //            qsb = LayoutInflater.from(getContext())
 //                    .inflate(R.layout.search_container_workspace, firstPage, false);
-            qsb = webView;
+
+            final FrameLayout frameLayout = new FrameLayout(getContext());
+            frameLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            frameLayout.setBackgroundColor(Color.YELLOW);
+            final View frontLayout = new View(getContext());
+            frontLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            frontLayout.setBackgroundColor(Color.parseColor("#00000000"));
+            frontLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+                }
+            });
+            frameLayout.addView(webView);
+            frameLayout.addView(frontLayout);
+
+            qsb = frameLayout;
+            qsb.setTag(R.id.frame_padding_tag, true);
         }
 
         CellLayout.LayoutParams lp = new CellLayout.LayoutParams(0, 0, firstPage.getCountX(), /*1*/firstPage.getCountY());
@@ -4176,5 +4187,12 @@ public class Workspace extends PagedView
         public void onAnimationEnd(Animator animation) {
             onEndStateTransition();
         }
+    }
+}
+
+class MyWebClient extends WebViewClient {
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        return super.shouldOverrideUrlLoading(view, request);
     }
 }

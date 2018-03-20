@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="browser_item_id" type="id"/>
+    <item name="frame_padding_tag" type="id"/>
 </resources>

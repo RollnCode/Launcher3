@@ -601,7 +601,6 @@ public class CellLayout extends ViewGroup implements BubbleTextShadowHandler {
 
     public boolean addViewToCellLayout(View child, int index, int childId, LayoutParams params,
             boolean markCells) {
-        final LayoutParams lp = params;
 
         // Hotseat icons - remove text
         if (child instanceof BubbleTextView) {
@@ -614,17 +613,17 @@ public class CellLayout extends ViewGroup implements BubbleTextShadowHandler {
 
         // Generate an id for each view, this assumes we have at most 256x256 cells
         // per workspace screen
-        if (lp.cellX >= 0 && lp.cellX <= mCountX - 1 && lp.cellY >= 0 && lp.cellY <= mCountY - 1) {
+        if (params.cellX >= 0 && params.cellX <= mCountX - 1 && params.cellY >= 0 && params.cellY <= mCountY - 1) {
             // If the horizontal or vertical span is set to -1, it is taken to
             // mean that it spans the extent of the CellLayout
-            if (lp.cellHSpan < 0) lp.cellHSpan = mCountX;
-            if (lp.cellVSpan < 0) lp.cellVSpan = mCountY;
+            if (params.cellHSpan < 0) params.cellHSpan = mCountX;
+            if (params.cellVSpan < 0) params.cellVSpan = mCountY;
 
             child.setId(childId);
             if (LOGD) {
                 Log.d(TAG, "Adding view to ShortcutsAndWidgetsContainer: " + child);
             }
-            mShortcutsAndWidgets.addView(child, index, lp);
+            mShortcutsAndWidgets.addView(child, index, params);
 
             if (markCells) markCellsAsOccupiedForView(child);
 

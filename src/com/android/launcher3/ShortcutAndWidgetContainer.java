@@ -74,13 +74,18 @@ public class ShortcutAndWidgetContainer extends ViewGroup {
         int count = getChildCount();
 
         int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSpecSize =  MeasureSpec.getSize(heightMeasureSpec);
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
         setMeasuredDimension(widthSpecSize, heightSpecSize);
 
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
-                measureChild(child);
+                boolean changePadding = true;
+                final Object tag = child.getTag(R.id.frame_padding_tag);
+                if (tag instanceof Boolean && (Boolean) tag) {
+                    changePadding = false;
+                }
+                measureChild(child, changePadding);
             }
         }
     }
@@ -107,6 +112,10 @@ public class ShortcutAndWidgetContainer extends ViewGroup {
     }
 
     public void measureChild(View child) {
+        measureChild(child, true);
+    }
+
+    public void measureChild(View child, boolean changePadding) {
         CellLayout.LayoutParams lp = (CellLayout.LayoutParams) child.getLayoutParams();
         if (!lp.isFullscreen) {
             final DeviceProfile profile = mLauncher.getDeviceProfile();
@@ -123,7 +132,9 @@ public class ShortcutAndWidgetContainer extends ViewGroup {
                 int cellPaddingX = mContainerType == CellLayout.WORKSPACE
                         ? profile.workspaceCellPaddingXPx
                         : (int) (profile.edgeMarginPx / 2f);
-                child.setPadding(cellPaddingX, cellPaddingY, cellPaddingX, 0);
+                if (changePadding) {
+                    child.setPadding(cellPaddingX, cellPaddingY, cellPaddingX, 0);
+                }
             }
         } else {
             lp.x = 0;
